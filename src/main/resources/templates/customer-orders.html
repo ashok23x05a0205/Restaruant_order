@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>My Orders</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div layout:fragment="content" class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-shopping-bag me-2"></i>My Orders</h2>
+        <a href="/menu" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i>Order Food
+        </a>
+    </div>
+
+    <div th:if="${orders == null or #lists.isEmpty(orders)}" class="text-center py-5">
+        <div class="card mx-auto" style="max-width: 400px;">
+            <div class="card-body">
+                <i class="fas fa-shopping-bag fa-4x text-muted mb-3"></i>
+                <h4 class="text-muted mb-2">No Orders Found</h4>
+                <p class="text-muted">You haven't placed any orders yet.</p>
+                <a href="/menu" class="btn btn-primary">
+                    <i class="fas fa-utensils me-1"></i>Browse Menu
+                </a>
+            </div>
+        </div>
+    </div>
+
+->
+    <div th:if="${orders != null and !#lists.isEmpty(orders)}" class="row g-4">
+        <div class="col-12" th:each="order : ${orders}">
+            <div class="card p-3">
+
+                <div class="row g-3">
+                    <div class="col-md-3 text-center">
+                        <img th:src="${(order.orderItems != null and !#lists.isEmpty(order.orderItems) and order.orderItems[0].foodItem != null) 
+                                       ? order.orderItems[0].foodItem.imageUrl 
+                                       : '/images/default-food.png'}"
+                             alt="Food Image"
+                             onerror="this.src='/images/default-food.png'"
+                             class="img-fluid rounded" style="max-height: 140px;">
+                    </div>
+
+                    <div class="col-md-6">
+                        <h5>Order #<span th:text="${order.id}"></span></h5>
+
+                        <p class="text-muted">
+                            <i class="fas fa-calendar me-1"></i>
+                            <span th:text="${#temporals.format(order.orderDate, 'MMM dd, yyyy hh:mm a')}"></span>
+                        </p>
+
+                        <div>
+                            <strong>Items:</strong>
+                            <ul class="list-unstyled ms-3" th:if="${order.orderItems != null}">
+                                <li th:each="item : ${order.orderItems}">
+                                    <span th:text="${item.foodItem.name}">Item Name</span>
+                                    x <span th:text="${item.quantity}">1</span>
+                                    - $<span th:text="${item.subtotal}">0</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <p th:if="${order.customerNotes}" class="text-muted mt-2">
+                            <strong>Notes:</strong> <span th:text="${order.customerNotes}"></span>
+                        </p>
+                    </div>
+
+                    <div class="col-md-3 text-md-end text-center">
+                        <span th:if="${order.status != null}"
+                              th:text="${order.status}"
+                              th:classappend="
+                                ${order.status.name() == 'PENDING'} ? 'badge bg-warning' :
+                                (${order.status.name() == 'CONFIRMED'} ? 'badge bg-info' :
+                                (${order.status.name() == 'PREPARING'} ? 'badge bg-primary' :
+                                (${order.status.name() == 'READY'} ? 'badge bg-success' :
+                                (${order.status.name() == 'DELIVERED'} ? 'badge bg-secondary' : 'badge bg-danger'))))"
+                              class="badge mb-2">
+                        </span>
+
+                        <h5 class="text-primary mt-2">Total: $<span th:text="${order.totalAmount}">0</span></h5>
+
+                        <form th:if="${order.status != null and order.status.name() == 'PENDING'}"
+                              th:action="@{'/orders/' + ${order.id} + '/cancel'}"
+                              method="post"
+                              onsubmit="return confirm('Are you sure you want to cancel this order?')">
+                            <button type="submit" class="btn btn-sm btn-outline-danger mt-2">
+                                <i class="fas fa-times me-1"></i>Cancel
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

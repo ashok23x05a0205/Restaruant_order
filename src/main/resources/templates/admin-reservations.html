@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>All Reservations</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        body {
+            background: linear-gradient(to right, #fdfbfb, #ebedee);
+            font-family: 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding-top: 70px; 
+        }
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #0d47a1 !important;
+        }
+        .back-btn {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #0d47a1;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        .back-btn:hover {
+            color: #073a94;
+            text-decoration: none;
+        }
+        .back-btn i {
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #0d47a1;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .card {
+            border: none;
+            border-radius: 14px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            margin-top: 20px;
+        }
+        .card-body {
+            padding: 25px;
+        }
+        table {
+            text-align: center;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+            font-weight: 600;
+        }
+        .badge {
+            font-size: 0.9rem;
+            padding: 0.5em 0.8em;
+            text-transform: uppercase;
+        }
+        .badge.bg-warning {
+            background-color: #ffc107 !important;
+            color: #212529;
+        }
+        .badge.bg-success {
+            background-color: #198754 !important;
+        }
+        .badge.bg-danger {
+            background-color: #dc3545 !important;
+        }
+        .badge.bg-secondary {
+            background-color: #6c757d !important;
+        }
+        .btn-group .btn {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .fa {
+            margin-right: 5px;
+        }
+        .no-reservation-card {
+            background: #f5f5f5;
+            margin: 50px auto;
+            max-width: 400px;
+            border-radius: 14px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+        }
+        .fa-calendar-times {
+            color: #90a4ae;
+        }
+        @media (max-width: 768px) {
+            .table-responsive {
+                font-size: 0.9rem;
+            }
+            h2 {
+                font-size: 2rem;
+            }
+            .btn-group .btn {
+                margin-bottom: 5px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+    <div class="container">
+        <a href="/dashboard" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+        <a class="navbar-brand mx-auto" href="#">All Reservations</a>
+        <div style="width: 60px;"></div>
+    </div>
+</nav>
+
+<div layout:fragment="content" class="container">
+    <h2><i class="fas fa-list me-2"></i>All Reservations</h2>
+    
+    <div th:if="${reservations.empty}" class="text-center no-reservation-card p-5">
+        <i class="fas fa-calendar-times fa-4x mb-3"></i>
+        <h4 class="text-muted">No Reservations Found</h4>
+        <p class="text-muted">No reservations have been made yet.</p>
+    </div>
+    
+    <div th:if="${!reservations.empty}" class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-primary">
+                <tr>
+                    <th>Customer</th>
+                    <th>Date & Time</th>
+                    <th>Party Size</th>
+                    <th>Contact</th>
+                    <th>Status</th>
+                    <th>Special Requests</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="reservation : ${reservations}">
+                    <td>
+                        <strong th:text="${reservation.customerName}"></strong><br/>
+                        <small class="text-muted" th:text="${reservation.user?.username}"></small>
+                    </td>
+                    <td>
+                        <strong th:text="${#temporals.format(reservation.reservationDate, 'MMM dd, yyyy')}"></strong><br/>
+                        <small class="text-muted" th:text="${#temporals.format(reservation.reservationDate, 'hh:mm a')}"></small>
+                    </td>
+                    <td>
+                        <i class="fas fa-users me-1"></i>
+                        <span th:text="${reservation.partySize}"></span>
+                    </td>
+                    <td>
+                        <div th:text="${reservation.customerEmail}"></div>
+                        <small class="text-muted" th:text="${reservation.customerPhone}"></small>
+                    </td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${reservation.status.name() == 'PENDING'} ? 'bg-warning' : 
+                                             (${reservation.status.name() == 'CONFIRMED'} ? 'bg-success' : 
+                                             (${reservation.status.name() == 'CANCELLED'} ? 'bg-danger' : 'bg-secondary'))"
+                              th:text="${reservation.status}">
+                        </span>
+                    </td>
+                    <td th:text="${reservation.specialRequests ?: 'None'}"></td>
+                    <td>
+                        <div class="btn-group" role="group" aria-label="Reservation Actions">
+                            <form th:if="${reservation.status.name() == 'PENDING'}"
+                                  th:action="@{'/reservations/' + ${reservation.id} + '/status'}"
+                                  method="post" style="display: inline;">
+                                <input type="hidden" name="status" value="CONFIRMED" />
+                                <button type="submit" class="btn btn-sm btn-success" title="Confirm">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </form>
+
+                            <form th:if="${reservation.status.name() == 'CONFIRMED'}"
+                                  th:action="@{'/reservations/' + ${reservation.id} + '/status'}"
+                                  method="post" style="display: inline;">
+                                <input type="hidden" name="status" value="COMPLETED" />
+                                <button type="submit" class="btn btn-sm btn-secondary" title="Mark Completed">
+                                    <i class="fas fa-flag-checkered"></i>
+                                </button>
+                            </form>
+
+                            <form th:if="${reservation.status.name() != 'CANCELLED' and reservation.status.name() != 'COMPLETED'}"
+                                  th:action="@{'/reservations/' + ${reservation.id} + '/cancel'}"
+                                  method="post" style="display: inline;"
+                                  onsubmit="return confirm('Are you sure you want to cancel this reservation?');">
+                                <button type="submit" class="btn btn-sm btn-danger" title="Cancel">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </form>
+
+                            <span th:if="${reservation.status.name() == 'CANCELLED' or reservation.status.name() == 'COMPLETED'}"
+                                  class="text-muted small">Complete</span>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

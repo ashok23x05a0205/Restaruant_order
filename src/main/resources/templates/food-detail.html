@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Food Details</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="row g-0">
+                        <div class="col-md-6">
+                            <img th:src="${foodItem.imageUrl}" class="img-fluid rounded-start h-100" 
+                                 th:alt="${foodItem.name}" style="object-fit: cover;">
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card-body h-100 d-flex flex-column">
+                                <div class="mb-3">
+                                    <span class="badge bg-primary mb-2" th:text="${foodItem.category}"></span>
+                                    <h3 class="card-title" th:text="${foodItem.name}"></h3>
+                                </div>
+                                
+                                <p class="card-text flex-grow-1" th:text="${foodItem.description}"></p>
+                                
+                                <div class="mt-auto">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="h4 text-primary mb-0">$<span th:text="${foodItem.price}"></span></span>
+                                        <span th:if="${foodItem.available}" class="badge bg-success">Available</span>
+                                        <span th:if="${!foodItem.available}" class="badge bg-danger">Out of Stock</span>
+                                    </div>
+                                    
+                                    <form th:if="${foodItem.available}" th:action="@{/orders/add-item}" method="post">
+                                        <input type="hidden" name="foodItemId" th:value="${foodItem.id}">
+                                        <div class="row g-2">
+                                            <div class="col-4">
+                                                <select name="quantity" class="form-select">
+                                                    <option value="1">1</option>
+                                                    <option value="2">2</option>
+                                                    <option value="3">3</option>
+                                                    <option value="4">4</option>
+                                                    <option value="5">5</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-8">
+                                                <button type="submit" class="btn btn-primary w-100">
+                                                    <i class="fas fa-cart-plus me-2"></i>Add to Order
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    
+                                    <div class="d-flex gap-2 mt-3">
+                                        <a href="/menu" class="btn btn-outline-secondary">
+                                            <i class="fas fa-arrow-left me-1"></i>Back to Menu
+                                        </a>
+                                        <a href="/orders" class="btn btn-outline-primary">
+                                            <i class="fas fa-list me-1"></i>View Orders
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

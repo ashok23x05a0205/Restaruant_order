@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>My Reservations</title>
+    <style>
+        body {
+            background: #f0f4f8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav.navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #004d40;
+            padding: 12px 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav .brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            user-select: none;
+        }
+
+        nav .nav-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        nav .btn-primary {
+            background-color: #00bfa5;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        nav .btn-primary:hover {
+            background-color: #008e76;
+            text-decoration: none;
+            color: white;
+        }
+
+        nav .btn-primary i {
+            font-size: 1.1rem;
+        }
+
+        .content-wrapper {
+            max-width: 720px;
+            margin: 40px auto 80px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        .btn-back {
+            background-color: #6c757d;
+            color: white;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            user-select: none;
+            margin-bottom: 25px;
+        }
+
+        .btn-back:hover {
+            background-color: #5a6268;
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn-back i {
+            font-size: 1.1rem;
+        }
+
+        h2.page-title {
+            font-weight: 700;
+            color: #004d40;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            font-size: 2rem;
+        }
+
+        .card {
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            text-align: left;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        thead th {
+            background-color: #e0f2f1;
+            color: #004d40;
+            padding: 14px;
+            text-align: center;
+            border-bottom: 2px solid #b2dfdb;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        tbody td {
+            padding: 14px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+            font-size: 0.95rem;
+            color: #333;
+        }
+
+        .badge {
+            padding: 6px 16px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+            display: inline-block;
+            min-width: 90px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .bg-warning {
+            background-color: #f0ad4e !important;
+        }
+
+        .bg-success {
+            background-color: #5cb85c !important;
+        }
+
+        .bg-danger {
+            background-color: #d9534f !important;
+        }
+
+        .bg-secondary {
+            background-color: #6c757d !important;
+        }
+
+        .btn-outline-danger {
+            background-color: transparent;
+            border: 2px solid #d9534f;
+            color: #d9534f;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-outline-danger:hover {
+            background-color: #d9534f;
+            color: white;
+            text-decoration: none;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: #777;
+            font-size: 1.1rem;
+        }
+
+        .me-1 {
+            margin-right: 6px;
+        }
+
+        .me-2 {
+            margin-right: 12px;
+        }
+
+        @media (max-width: 600px) {
+            nav.navbar {
+                flex-direction: column;
+                gap: 12px;
+                padding: 12px 20px;
+            }
+
+            nav .nav-actions {
+                width: 100%;
+                justify-content: center;
+            }
+
+            h2.page-title {
+                font-size: 1.6rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .content-wrapper {
+                margin: 20px auto;
+                padding: 0 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="brand" tabindex="0">Reservation System</div>
+    <div class="nav-actions">
+        <a href="/reservations/new" class="btn-primary" title="Make a New Reservation">
+            <i class="fas fa-plus"></i> New Reservation
+        </a>
+    </div>
+</nav>
+
+<div layout:fragment="content">
+    <div class="content-wrapper">
+        <button class="btn-back" onclick="history.back();" aria-label="Go back to previous page">
+            <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <h2 class="page-title">
+            <i class="fas fa-calendar-alt me-2"></i> My Reservations
+        </h2>
+        <div th:if="${reservations.empty}" class="no-data">
+            <div class="card">
+                <div class="card-body py-5 text-center">
+                    <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">No Reservations Found</h4>
+                    <p class="text-muted">You haven't made any reservations yet.</p>
+                    <a href="/reservations/new" class="btn-primary" title="Make Your First Reservation">
+                        <i class="fas fa-plus me-1"></i> Make Your First Reservation
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div th:if="${!reservations.empty}">
+            <div class="card">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Date &amp; Time</th>
+                        <th>Party Size</th>
+                        <th>Status</th>
+                        <th>Special Requests</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="reservation : ${reservations}">
+                        <td>
+                            <strong th:text="${#temporals.format(reservation.reservationDate, 'MMM dd, yyyy')}"></strong><br>
+                            <small class="text-muted" th:text="${#temporals.format(reservation.reservationDate, 'hh:mm a')}"></small>
+                        </td>
+                        <td>
+                            <i class="fas fa-users me-1"></i>
+                            <span th:text="${reservation.partySize}"></span>
+                        </td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${reservation.status.name() == 'PENDING'} ? 'bg-warning' :
+                                                 (${reservation.status.name() == 'CONFIRMED'} ? 'bg-success' :
+                                                 (${reservation.status.name() == 'CANCELLED'} ? 'bg-danger' : 'bg-secondary'))"
+                                  th:text="${reservation.status}">
+                            </span>
+                        </td>
+                        <td th:text="${reservation.specialRequests ?: 'None'}"></td>
+                        <td>
+                            <form th:if="${reservation.status.name() != 'CANCELLED' and reservation.status.name() != 'COMPLETED'}"
+                                  th:action="@{'/reservations/' + ${reservation.id} + '/cancel'}"
+                                  method="post" style="display: inline;"
+                                  onsubmit="return confirm('Are you sure you want to cancel this reservation?')">
+                                <button type="submit" class="btn-outline-danger">
+                                    <i class="fas fa-times me-1"></i>Cancel
+                                </button>
+                            </form>
+                            <span th:if="${reservation.status.name() == 'CANCELLED' or reservation.status.name() == 'COMPLETED'}"
+                                  class="text-muted">No actions available</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Support Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(to right, #e3f2fd, #ffffff);
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .navbar-brand, .nav-link {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        h2, h5 {
+            font-weight: 800;
+            color: #0d47a1;
+        }
+
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+        }
+
+        .card-body h4 {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .card-body p {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            font-weight: 600;
+            font-size: 1rem;
+            border-radius: 12px;
+            margin: 5px;
+        }
+
+        .card-header h5 {
+            font-weight: bold;
+        }
+
+        .fa {
+            margin-right: 5px;
+        }
+
+        .dashboard-title {
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 40px;
+        }
+
+        .navbar {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .d-grid a {
+            min-width: 180px;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="/" th:href="@{/}"><i class="fas fa-concierge-bell me-2"></i>Restaurant System</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/" th:href="@{/}"><i class="fas fa-home me-1"></i>Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/support" th:href="@{/support}"><i class="fas fa-headset me-1"></i>Support</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/reservations" th:href="@{/reservations}"><i class="fas fa-calendar-alt me-1"></i>Reservations</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-danger" href="/logout" th:href="@{/}"><i class="fas fa-sign-out-alt me-1"></i>Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div layout:fragment="content" class="container">
+    <div class="dashboard-title">
+        <h2><i class="fas fa-headset me-2"></i>Support Dashboard</h2>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 th:text="${openTickets}">0</h4>
+                            <p class="mb-0">Open Tickets</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-exclamation-circle fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 th:text="${totalTickets}">0</h4>
+                            <p class="mb-0">Total Tickets</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-ticket-alt fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-tools me-2"></i>Quick Actions</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="d-grid gap-2 d-md-inline-flex justify-content-center">
+                        <a href="/support" class="btn btn-primary" th:href="@{/support}">
+                            <i class="fas fa-list me-2"></i>View All Tickets
+                        </a>
+                        <a href="/reservations" class="btn btn-success" th:href="@{/reservations}">
+                            <i class="fas fa-calendar-alt me-2"></i>View Reservations
+                        </a>
+                        
+                        <a href="/logout" class="btn btn-danger" th:href="@{/}">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

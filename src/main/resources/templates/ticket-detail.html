@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en" 
+      xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+      layout:decorate="~{layout}">
+<head>
+    <title>TEAM-H -> Support Ticket Details</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+            margin: 0; 
+            padding: 20px 15px;
+        }
+        .content-wrapper {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+        h2 {
+            font-weight: 700;
+            font-size: 1.75rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #212529;
+        }
+        h2 i {
+            color: #0d6efd;
+            font-size: 1.5rem;
+        }
+        a.btn-secondary {
+            font-weight: 600;
+            padding: 8px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #fff;
+            background-color: #6c757d;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background-color 0.3s ease;
+        }
+        a.btn-secondary:hover {
+            background-color: #5a6268;
+            color: #fff;
+            text-decoration: none;
+        }
+        a.btn-secondary i {
+            font-size: 1.1rem;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            gap: 20px;
+        }
+        .col-md-8 {
+            flex: 0 0 66.6667%;
+            max-width: 66.6667%;
+        }
+        .col-md-4 {
+            flex: 0 0 33.3333%;
+            max-width: 33.3333%;
+        }
+        @media (max-width: 768px) {
+            .col-md-8, .col-md-4 {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+        }
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+            padding: 20px 25px;
+            display: flex;
+            flex-direction: column;
+        }
+        .card-header {
+            border-bottom: none;
+            margin-bottom: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card-header h5 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #212529;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card-header h6 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #212529;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .badge {
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 6px 12px;
+            border-radius: 18px;
+            text-transform: uppercase;
+            color: #fff !important;
+        }
+        .bg-warning {
+            background-color: #ffc107 !important;
+            color: #212529 !important;
+        }
+        .bg-info {
+            background-color: #0dcaf0 !important;
+        }
+        .bg-success {
+            background-color: #198754 !important;
+        }
+        .bg-secondary {
+            background-color: #6c757d !important;
+        }
+        .bg-primary {
+            background-color: #0d6efd !important;
+        }
+        .bg-danger {
+            background-color: #dc3545 !important;
+        }
+        .card-body p {
+            margin-bottom: 0;
+            line-height: 1.5;
+        }
+        .mb-3 {
+            margin-bottom: 20px !important;
+        }
+        .bg-light {
+            background-color: #f8f9fa !important;
+        }
+        .p-3 {
+            padding: 1rem !important;
+        }
+        .rounded {
+            border-radius: 8px !important;
+        }
+        .bg-opacity-10 {
+            opacity: 0.1;
+        }
+        .border-start {
+            border-left: 5px solid transparent !important;
+        }
+        .border-success {
+            border-color: #198754 !important;
+        }
+        .border-3 {
+            border-width: 3px !important;
+        }
+        .text-muted {
+            color: #6c757d !important;
+            font-size: 0.9rem;
+        }
+        form textarea.form-control {
+            border-radius: 8px;
+            border: 1.5px solid #ced4da;
+            padding: 10px 12px;
+            font-size: 1rem;
+            resize: vertical;
+            width: 100%;
+        }
+        form label {
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: block;
+            color: #495057;
+        }
+        button.btn-success {
+            background-color: #198754;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s ease;
+        }
+        button.btn-success:hover {
+            background-color: #157347;
+        }
+        button.btn-success i {
+            font-size: 1.1rem;
+        }
+        .alert-success {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 12px 18px;
+            border-radius: 8px;
+            color: #155724;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            margin-top: 20px;
+        }
+        .alert-success i {
+            font-size: 1.3rem;
+        }
+        ul.list-unstyled {
+            padding-left: 0;
+            margin: 0;
+        }
+        ul.list-unstyled li {
+            margin-bottom: 14px;
+            font-size: 1rem;
+            color: #495057;
+        }
+        ul.list-unstyled li strong {
+            display: block;
+            margin-bottom: 4px;
+            color: #212529;
+        }
+        ul.list-unstyled li span {
+            word-break: break-word;
+        }
+        .me-1 {
+            margin-right: 0.25rem !important;
+        }
+        .me-2 {
+            margin-right: 0.5rem !important;
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content" class="content-wrapper">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-ticket-alt"></i>Support Ticket Details</h2>
+            <a href="/support" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Back to Tickets
+            </a>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 th:text="${ticket.subject}">Ticket Subject</h5>
+                        <div>
+                            <span class="badge me-2" 
+                                  th:classappend="${ticket.status.name() == 'OPEN'} ? 'bg-warning' : 
+                                                 (${ticket.status.name() == 'IN_PROGRESS'} ? 'bg-info' : 
+                                                 (${ticket.status.name() == 'RESOLVED'} ? 'bg-success' : 'bg-secondary'))"
+                                  th:text="${ticket.status}">
+                            </span>
+                            <span class="badge" 
+                                  th:classappend="${ticket.priority.name() == 'LOW'} ? 'bg-secondary' : 
+                                                 (${ticket.priority.name() == 'MEDIUM'} ? 'bg-primary' : 
+                                                 (${ticket.priority.name() == 'HIGH'} ? 'bg-warning' : 'bg-danger'))"
+                                  th:text="${ticket.priority}">
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <h6>Original Message:</h6>
+                            <p th:text="${ticket.message}" class="bg-light p-3 rounded"></p>
+                        </div>
+                        
+						<div th:if="${ticket.response}" class="mb-3">
+						    <h6>Support Response:</h6>
+						    <div class="bg-success bg-opacity-10 p-3 rounded border-start border-success border-3">
+						        <p th:text="${ticket.response}" class="mb-2"></p>
+						        <small class="text-muted">
+						            Responded on: <span th:text="${#temporals.format(ticket.respondedAt, 'MMM dd, yyyy hh:mm a')}"></span>
+						        </small>
+						    </div>
+						</div>
+
+                        <form th:if="${ticket.status.name() != 'RESOLVED' and ticket.status.name() != 'CLOSED'}" 
+                              th:action="@{'/support/' + ${ticket.id} + '/respond'}" 
+                              method="post" 
+                              sec:authorize="hasRole('SUPPORT') or hasRole('ADMIN')">
+                            <div class="mb-3">
+                                <label for="response" class="form-label">Response:</label>
+                                <textarea id="response" class="form-control" name="response" rows="4" required 
+                                          placeholder="Type your response here..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-reply me-1"></i>Send Response
+                            </button>
+                        </form>
+                        
+                        <div th:if="${ticket.status.name() == 'RESOLVED'}" class="alert alert-success">
+                            <i class="fas fa-check-circle"></i>
+                            This ticket has been resolved.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h6><i class="fas fa-info-circle me-2"></i>Ticket Information</h6>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li>
+                                <strong>Customer:</strong>
+                                <span th:text="${ticket.user.fullName}"></span>
+                            </li>
+                            <li>
+                                <strong>Email:</strong>
+                                <span th:text="${ticket.user.email}"></span>
+                            </li>
+                            <li>
+                                <strong>Created:</strong>
+                                <span th:text="${#temporals.format(ticket.createdAt, 'MMM dd, yyyy hh:mm a')}"></span>
+                            </li>
+                            <li>
+                                <strong>Status:</strong>
+                                <span th:text="${ticket.status}"></span>
+                            </li>
+                            <li>
+                                <strong>Priority:</strong>
+                                <span th:text="${ticket.priority}"></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

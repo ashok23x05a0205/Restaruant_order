@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>All Orders</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f5f7fa;
+        }
+
+        .page-header {
+            text-align: center;
+            margin: 40px 0 30px;
+            position: relative;
+        }
+
+        .page-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #2c3e50;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .text-muted {
+            font-size: 0.95rem;
+        }
+
+        .badge {
+            font-size: 0.9rem;
+            padding: 6px 12px;
+            border-radius: 50px;
+        }
+
+        .btn-group-vertical .btn {
+            margin-bottom: 5px;
+        }
+
+        ul.list-unstyled li {
+            margin-bottom: 4px;
+        }
+
+        .no-orders {
+            padding: 80px 0;
+        }
+
+        .no-orders i {
+            font-size: 3rem;
+        }
+
+        .total-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2980b9;
+        }
+
+        .order-card {
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .text-end {
+                text-align: center !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container">
+    <a class="navbar-brand" href="#" th:href="@{/}"><i class="fas fa-utensils"></i> FoodApp</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" th:href="@{/orders}">Orders</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/menu}">Menu</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/}">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div layout:fragment="content" class="container mt-4">
+    <div class="page-header">
+        <a th:href="@{/dashboard}" class="btn btn-outline-primary back-btn" title="Back to Dashboard">
+            <i class="fas fa-arrow-left me-1"></i> Back
+        </a>
+        <h2><i class="fas fa-shopping-bag me-2"></i>All Orders</h2>
+    </div>
+
+    <div th:if="${orders.empty}" class="text-center no-orders">
+        <div class="card mx-auto" style="max-width: 500px;">
+            <div class="card-body">
+                <i class="fas fa-box-open text-muted mb-3"></i>
+                <h4 class="text-muted">No Orders Found</h4>
+                <p class="text-muted">No orders have been placed yet.</p>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${!orders.empty}">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10">
+                <div th:each="order : ${orders}" class="card order-card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h5 class="card-title">
+                                    Order #<span th:text="${order.id}"></span>
+                                    <small class="text-muted">by <span th:text="${order.user.fullName}"></span></small>
+                                </h5>
+                                <p class="text-muted mb-2">
+                                    <i class="fas fa-calendar-alt me-1"></i>
+                                    <span th:text="${#temporals.format(order.orderDate, 'MMM dd, yyyy hh:mm a')}"></span>
+                                </p>
+
+                                <div class="mb-2">
+                                    <strong>Items:</strong>
+                                    <ul class="list-unstyled ms-3">
+                                        <li th:each="item : ${order.orderItems}">
+                                            <span th:text="${item.foodItem.name}"></span>
+                                            x <span th:text="${item.quantity}"></span>
+                                            - $<span th:text="${item.subtotal}"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <p th:if="${order.deliveryAddress}" class="text-muted">
+                                    <strong>Address:</strong> <span th:text="${order.deliveryAddress}"></span>
+                                </p>
+                            </div>
+
+                            <div class="col-md-4 text-end">
+                                <span class="badge mb-2"
+                                      th:classappend="${order.status.name() == 'PENDING'} ? 'bg-warning' : 
+                                                        (${order.status.name() == 'CONFIRMED'} ? 'bg-info' : 
+                                                        (${order.status.name() == 'PREPARING'} ? 'bg-primary' : 
+                                                        (${order.status.name() == 'READY'} ? 'bg-success' : 
+                                                        (${order.status.name() == 'DELIVERED'} ? 'bg-secondary' : 'bg-danger'))))"
+                                      th:text="${order.status}"></span>
+
+                                <h5 class="total-price mt-2">Total: $<span th:text="${order.totalAmount}"></span></h5>
+
+                                <div class="btn-group-vertical mt-3" role="group">
+                                    <form th:if="${order.status.name() == 'PENDING'}"
+                                          th:action="@{'/orders/' + ${order.id} + '/status'}"
+                                          method="post">
+                                        <input type="hidden" name="status" value="CONFIRMED">
+                                        <button type="submit" class="btn btn-sm btn-success">
+                                            <i class="fas fa-check"></i> Confirm
+                                        </button>
+                                    </form>
+
+                                    <form th:if="${order.status.name() == 'CONFIRMED'}"
+                                          th:action="@{'/orders/' + ${order.id} + '/status'}"
+                                          method="post">
+                                        <input type="hidden" name="status" value="PREPARING">
+                                        <button type="submit" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-utensils"></i> Preparing
+                                        </button>
+                                    </form>
+
+                                    <form th:if="${order.status.name() == 'PREPARING'}"
+                                          th:action="@{'/orders/' + ${order.id} + '/status'}"
+                                          method="post">
+                                        <input type="hidden" name="status" value="READY">
+                                        <button type="submit" class="btn btn-sm btn-warning">
+                                            <i class="fas fa-bell"></i> Ready
+                                        </button>
+                                    </form>
+
+                                    <form th:if="${order.status.name() == 'READY'}"
+                                          th:action="@{'/orders/' + ${order.id} + '/status'}"
+                                          method="post">
+                                        <input type="hidden" name="status" value="DELIVERED">
+                                        <button type="submit" class="btn btn-sm btn-secondary">
+                                            <i class="fas fa-truck"></i> Delivered
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
