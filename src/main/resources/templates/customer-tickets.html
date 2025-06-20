@@ -4,65 +4,162 @@
       layout:decorate="~{layout}">
 <head>
     <title>My Support Tickets</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
     <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f5f7fa;
+        }
+
+        .page-header {
+            padding: 20px 0;
+        }
+
+        .ticket-card {
+            border-radius: 12px;
+            background-color: #fff;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .ticket-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .badge-status, .badge-priority {
+            font-size: 0.85rem;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .ticket-meta {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .no-tickets-card {
+            padding: 60px;
+            max-width: 600px;
+            margin: 60px auto;
+            background-color: #ffffff;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-create {
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
-    <div layout:fragment="content">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
-            <div class="container">
-                <a class="navbar-brand" th:href="@{/}">SupportSystem</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" 
-                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" th:href="@{/support}">My Tickets</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" th:href="@{/support/new}">New Ticket</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" th:href="@{/dashboard}">Profile</a>
-                        </li>
-                    </ul>
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link" th:href="@{/}">Logout</a>
-                        </li>
-                    </ul>
-                </div>
+<div layout:fragment="content">
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/}"><i class="fas fa-utensils me-1"></i>RestaurantApp</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/support}">My Tickets</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/support/new}">Create Ticket</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </li>
+                </ul>
             </div>
-        </nav>
-       
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2><i class="fas fa-headset me-2"></i>My Support Tickets</h2>
-            <a href="/support/new" class="btn btn-primary">
-                <i class="fas fa-plus me-1"></i>New Ticket
+        </div>
+    </nav>
+
+	<div class="container mb-4">
+	    <div class="row align-items-center">
+	        <div class="col-md-4 text-start">
+	            <a href="/dashboard" class="btn btn-outline-secondary">
+	                <i class="fas fa-arrow-left me-1"></i>Back
+	            </a>
+	        </div>
+	        <div class="col-md-4 text-center">
+	            <h3 class="m-0"><i class="fas fa-headset me-2 text-primary"></i>My Support Tickets</h3>
+	        </div>
+	        <div class="col-md-4 text-end">
+	            <a href="/support/new" class="btn btn-primary">
+	                <i class="fas fa-plus me-1"></i>New Ticket
+	            </a>
+	        </div>
+	    </div>
+	</div>
+
+
+    <div th:if="${tickets == null or #lists.isEmpty(tickets)}">
+        <div class="no-tickets-card">
+            <i class="fas fa-ticket-alt fa-4x text-muted mb-3"></i>
+            <h4 class="text-muted">No Support Tickets</h4>
+            <p class="text-muted">You haven’t created any support tickets yet.</p>
+            <a href="/support/new" class="btn btn-primary btn-create">
+                <i class="fas fa-plus me-1"></i>Create Your First Ticket
             </a>
-        </div>
-		<div th:if="${tickets.empty}" class="text-center">
-		        <div class="card no-tickets-card">
-		            <i class="fas fa-ticket-alt fa-4x text-muted mb-3"></i>
-		            <h4 class="text-muted">No Support Tickets</h4>
-		            <p class="text-muted">You haven't created any support tickets yet.</p>
-		            <a href="/support/new" class="btn btn-primary">
-		                <i class="fas fa-plus me-1"></i>Create Your First Ticket
-		            </a>
-		        </div>
-
-        <div th:if="${tickets.empty}" class="text-center">
-        </div>
-
-        <div th:if="${!tickets.empty}" class="row">
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="container" th:if="${tickets != null and !#lists.isEmpty(tickets)}">
+        <div class="row gy-4" th:each="ticket : ${tickets}">
+            <div class="col-md-12">
+                <div class="card ticket-card">
+                    <div class="card-body d-flex justify-content-between flex-wrap">
+                        <div class="flex-grow-1">
+                            <h5 class="card-title mb-1" th:text="${ticket.subject}">Ticket Subject</h5>
+                            <p class="mb-2" th:text="${#strings.abbreviate(ticket.message, 150)}">Short ticket message</p>
+                            <div class="ticket-meta">
+                                <i class="fas fa-user-circle me-1"></i><span th:text="${ticket.user.fullName}">User Name</span> |
+                                <i class="fas fa-clock me-1"></i>
+                                <span th:text="${#temporals.format(ticket.createdAt, 'MMM dd, yyyy HH:mm')}">Date</span>
+                            </div>
+                        </div>
+                        <div class="text-end mt-3 mt-md-0">
+                            <span class="badge badge-status me-1"
+                                  th:classappend="${ticket.status} == 'OPEN' ? 'bg-warning text-dark' :
+                                                  (${ticket.status} == 'IN_PROGRESS' ? 'bg-info text-white' :
+                                                  (${ticket.status} == 'RESOLVED' ? 'bg-success text-white' : 'bg-secondary text-white'))"
+                                  th:text="${ticket.status}">Status</span>
+
+                            <span class="badge badge-priority"
+                                  th:classappend="${ticket.priority} == 'LOW' ? 'bg-secondary' :
+                                                  (${ticket.priority} == 'MEDIUM' ? 'bg-primary' :
+                                                  (${ticket.priority} == 'HIGH' ? 'bg-warning text-dark' : 'bg-danger text-white'))"
+                                  th:text="${ticket.priority}">Priority</span>
+
+                            <br/>
+                            <a th:href="@{'/support/' + ${ticket.id}}" class="btn btn-sm btn-outline-primary mt-2">
+                                <i class="fas fa-eye me-1"></i>View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
